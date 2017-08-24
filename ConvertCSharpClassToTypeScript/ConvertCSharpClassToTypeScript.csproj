@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Antlr4.Runtime.Standard" Version="4.7.1" />
+    <ProjectReference Include="..\CSharpFileParserTools\CSharpFileParserTools.csproj" />
   </ItemGroup>
 
 </Project>

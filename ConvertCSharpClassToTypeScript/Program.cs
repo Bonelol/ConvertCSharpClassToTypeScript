@@ -5,8 +5,7 @@ using System.Linq;
 using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using Antlr4.Runtime;
-using Antlr4.Runtime.Tree;
-using Antlr4.Runtime.Tree.Pattern;
+using CSharpFileParserTools;
 
 namespace ConvertCSharpClassToTypeScript
 {
