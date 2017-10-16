@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using Antlr4.Runtime;
-using CSharpFileParserTools;
+using Microsoft.CodeAnalysis.CSharp;
 
 namespace ConvertCSharpClassToTypeScript
 {
@@ -32,7 +31,7 @@ namespace ConvertCSharpClassToTypeScript
                 }
                 else
                 {
-                    _inputPath = inputPath;
+                    _inputPath = @"C:\share\models";// inputPath;
                     step2.ShowAndWatch();
                 }
             };
@@ -69,15 +68,14 @@ namespace ConvertCSharpClassToTypeScript
                 var reader = new StreamReader(stream);
                 var content = reader.ReadToEnd();
 
-                var s = CharStreams.fromstring(content);
-                var lexer = new CSharpLexer(s);
-                var tokens = new CommonTokenStream(lexer);
-                var parser = new CSharpParser(tokens) {BuildParseTree = true};
-                var context = parser.compilation_unit();
+                var tree = CSharpSyntaxTree.ParseText(content);
+                
+                tree.TryGetRoot(out var root);
 
-                var classVisitor = new ClassDefinitionVisitor(cache);
-                var classDefinitionCollection = classVisitor.Visit(context);
-                classDefinitionCollection.ForEach(c => classes.Add(c.Name, c));
+                var visitor = new ClassDefinitionWalker(cache);
+                visitor.Visit(root);
+
+                visitor.Collection.ForEach(c => classes.Add(c.Name, c));
             }
 
             Console.WriteLine("Done parsing");
