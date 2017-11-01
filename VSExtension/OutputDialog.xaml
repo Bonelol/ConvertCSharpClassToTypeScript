@@ -1,0 +1,39 @@
+﻿<platformUi:DialogWindow  x:Class="VSExtension.OutputDialog"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:VSExtension"
+             xmlns:platformUi="clr-namespace:Microsoft.VisualStudio.PlatformUI;assembly=Microsoft.VisualStudio.Shell.15.0"
+             xmlns:system="clr-namespace:System;assembly=mscorlib"
+             mc:Ignorable="d" Width="374" Height="424" Title="Convert to TypeScript">
+    <platformUi:DialogWindow.Resources>
+        <ObjectDataProvider x:Key="dataFromEnum" MethodName="GetValues"
+                            ObjectType="{x:Type system:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="local:OutputOptions"/>
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+    </platformUi:DialogWindow.Resources>
+    <Grid>
+        <ListBox x:Name="listBox" ItemsSource="{Binding Files}" HorizontalAlignment="Left" Margin="10,37,0,0" Width="346" Height="304" VerticalAlignment="Top" HorizontalContentAlignment="Stretch">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="8*"></ColumnDefinition>
+                            <ColumnDefinition Width="2*"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <CheckBox  IsChecked="{Binding Selected}" Grid.Column="0" Grid.Row="0">
+                            <TextBlock Text="{Binding FileName}"/>
+                        </CheckBox>
+                        <Label Content="{Binding Result}" Grid.Column="1" Grid.Row="0" HorizontalContentAlignment="Right" HorizontalAlignment="Right"/>
+                    </Grid>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        <Button x:Name="button" Content="Convert" Margin="281,355,0,0" Click="button_Click" Height="20" VerticalAlignment="Top" HorizontalAlignment="Left" Width="75"/>
+        <CheckBox x:Name="checkBox" Content="Select All" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Checked="checkBox_Checked" Unchecked="CheckBox_OnUnchecked"/>
+        <ComboBox x:Name="comboBox" ItemsSource="{Binding Source={StaticResource dataFromEnum}}" SelectedItem="{Binding SelectedOption}" HorizontalAlignment="Left" Margin="236,10,0,0" VerticalAlignment="Top" Width="120"/>
+    </Grid>
+</platformUi:DialogWindow>
