@@ -8,12 +8,11 @@
              xmlns:system="clr-namespace:System;assembly=mscorlib"
              mc:Ignorable="d" Width="374" Height="424" Title="Convert to TypeScript">
     <platformUi:DialogWindow.Resources>
-        <ObjectDataProvider x:Key="dataFromEnum" MethodName="GetValues"
-                            ObjectType="{x:Type system:Enum}">
+        <!--<ObjectDataProvider x:Key="dataFromEnum" MethodName="GetValues" ObjectType="{x:Type system:Enum}">
             <ObjectDataProvider.MethodParameters>
                 <x:Type TypeName="local:OutputOptions"/>
             </ObjectDataProvider.MethodParameters>
-        </ObjectDataProvider>
+        </ObjectDataProvider>-->
     </platformUi:DialogWindow.Resources>
     <Grid>
         <ListBox x:Name="listBox" ItemsSource="{Binding Files}" HorizontalAlignment="Left" Margin="10,37,0,0" Width="346" Height="304" VerticalAlignment="Top" HorizontalContentAlignment="Stretch">
@@ -35,5 +34,6 @@
         <Button x:Name="button" Content="Convert" Margin="281,355,0,0" Click="button_Click" Height="20" VerticalAlignment="Top" HorizontalAlignment="Left" Width="75"/>
         <CheckBox x:Name="checkBox" Content="Select All" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Checked="checkBox_Checked" Unchecked="CheckBox_OnUnchecked"/>
         <ComboBox x:Name="comboBox" ItemsSource="{Binding Source={StaticResource dataFromEnum}}" SelectedItem="{Binding SelectedOption}" HorizontalAlignment="Left" Margin="236,10,0,0" VerticalAlignment="Top" Width="120"/>
+        <CheckBox x:Name="interfaceCheckBox" IsChecked="{Binding OutputInterface}" Content="Interface?" HorizontalAlignment="Left" Margin="83,10,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.268,0.8"/>
     </Grid>
 </platformUi:DialogWindow>

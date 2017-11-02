@@ -118,7 +118,7 @@ namespace VSExtension
             return items[0];
         }
 
-        private string CreateTsFile(IDictionary<string, ClassDefinition> classes, ClassDefinition c)
+        private static string CreateTsFile(IDictionary<string, ClassDefinition> classes, ClassDefinition c)
         {
             var builder = new StringBuilder();
             var imports = c.References.Where(classes.ContainsKey);

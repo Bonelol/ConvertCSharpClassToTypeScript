@@ -38,6 +38,7 @@ namespace VSExtension
         }
 
         public IList<OutputOptions> OutputOptionList = Enum.GetValues(typeof(OutputOptions)).Cast<OutputOptions>().ToList();
+        private bool _outputInterface;
 
         public OutputOptions SelectedOption
         {
@@ -49,7 +50,15 @@ namespace VSExtension
             }
         }
 
-        public bool OutputInterface { get; set; }
+        public bool OutputInterface
+        {
+            get => _outputInterface;
+            set
+            {
+                _outputInterface = value;
+                OnPropertyChanged();
+            }
+        }
 
         public OutputDialog(DTE2 dte2, string path)
         {

@@ -89,13 +89,18 @@
       <ResourceName>Menus.ctmenu</ResourceName>
     </VSCTCompile>
     <Content Include="index.html" />
+    <Content Include="LICENSE.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
     <Content Include="Resources\Command.png" />
     <Content Include="Resources\CommandPackage.ico" />
-    <Content Include="Resources\ConvertToTypeScript.png" />
-    <Content Include="Resources\ConvertToTypeScriptPackage.ico" />
     <Content Include="Resources\FolderCommand.png" />
     <Content Include="Resources\ItemCommand.png" />
-    <Content Include="Resources\VSPackage.ico" />
+    <Content Include="Resources\VSPackage.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
     <Content Include="stylesheet.css" />
   </ItemGroup>
   <ItemGroup>
