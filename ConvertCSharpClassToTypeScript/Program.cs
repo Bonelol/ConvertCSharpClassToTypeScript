@@ -114,5 +114,20 @@ namespace ConvertCSharpClassToTypeScript
             File.WriteAllText($@"{_outputPath}\{c.Name}.ts", result, Encoding.UTF8);
             Console.WriteLine($"File {c.Name}.ts created");
         }
+
+        private void IndexFile(IReadOnlyDictionary<string, ClassDefinition> classes)
+        {
+            //export * from "./TblSchool";
+            var builder = new StringBuilder();
+
+            foreach (var c in classes.Values)
+            {
+                builder.AppendLine($@"export {{{c.Name}}} from './{c.Name}'");
+            }
+
+            var result = builder.ToString();
+            File.AppendAllText($@"{_outputPath}\index.ts", result, Encoding.UTF8);
+            Console.WriteLine($"File index.ts created");
+        }
     }
 }

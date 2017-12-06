@@ -15,7 +15,7 @@
         </ObjectDataProvider>-->
     </platformUi:DialogWindow.Resources>
     <Grid>
-        <ListBox x:Name="listBox" ItemsSource="{Binding Files}" HorizontalAlignment="Left" Margin="10,37,0,0" Width="346" Height="304" VerticalAlignment="Top" HorizontalContentAlignment="Stretch">
+        <ListBox x:Name="listBox" ItemsSource="{Binding Files}" Margin="0,0,10,47" HorizontalContentAlignment="Stretch" HorizontalAlignment="Right" Width="346" Height="265" VerticalAlignment="Bottom">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
@@ -31,9 +31,11 @@
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
-        <Button x:Name="button" Content="Convert" Margin="281,355,0,0" Click="button_Click" Height="20" VerticalAlignment="Top" HorizontalAlignment="Left" Width="75"/>
-        <CheckBox x:Name="checkBox" Content="Select All" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Checked="checkBox_Checked" Unchecked="CheckBox_OnUnchecked"/>
-        <ComboBox x:Name="comboBox" ItemsSource="{Binding Source={StaticResource dataFromEnum}}" SelectedItem="{Binding SelectedOption}" HorizontalAlignment="Left" Margin="236,10,0,0" VerticalAlignment="Top" Width="120"/>
-        <CheckBox x:Name="interfaceCheckBox" IsChecked="{Binding OutputInterface}" Content="Interface?" HorizontalAlignment="Left" Margin="83,10,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.268,0.8"/>
+        <Button x:Name="button" Content="Convert" Margin="281,363,0,0" Click="button_Click" Height="20" VerticalAlignment="Top" HorizontalAlignment="Left" Width="75"/>
+        <CheckBox x:Name="checkBox" Content="Select All" HorizontalAlignment="Left" Margin="10,351,0,0" VerticalAlignment="Top" Checked="CheckBox_Checked" Unchecked="CheckBox_OnUnchecked"/>
+        <ComboBox x:Name="comboBox" ItemsSource="{Binding Source={StaticResource dataFromEnum}}" SelectedItem="{Binding SelectedOption}" Margin="236,50,10,0" VerticalAlignment="Top"/>
+        <CheckBox x:Name="interfaceCheckBox" IsChecked="{Binding OutputInterface}" Content="Interface?" HorizontalAlignment="Right" Margin="0,0,284,368" VerticalAlignment="Bottom" RenderTransformOrigin="-0.268,0.8"/>
+        <CheckBox x:Name="indexCheckbox" IsChecked="{Binding GenerateIndexFile}" Content="Generate index.ts" HorizontalAlignment="Right" Margin="0,30,244,0" VerticalAlignment="Top"/>
+        <Label x:Name="label" Content="When same name file existed:" HorizontalAlignment="Right" Margin="0,50,189,0" VerticalAlignment="Top" RenderTransformOrigin="0.474,0.538"/>
     </Grid>
 </platformUi:DialogWindow>

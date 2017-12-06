@@ -84,7 +84,7 @@ namespace VSExtension
             var item = GetSelectedSolutionExplorerItem();
             var projectItem = (ProjectItem) item.Object;
             var filePath = projectItem.Properties.Item("FullPath").Value.ToString();
-            var classDefinitions = ConvertHelper.ParseFile(filePath).ToDictionary(c => c.Name, c => c);
+            var classDefinitions = new ConvertHelper().ParseFile(filePath).ToDictionary(c => c.Name, c => c);
 
             foreach (var definition in classDefinitions)
             {

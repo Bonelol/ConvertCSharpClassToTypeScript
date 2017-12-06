@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -22,6 +23,8 @@ namespace VSExtension
     public partial class OutputDialog : DialogWindow, INotifyPropertyChanged
     {
         private readonly DTE2 _dte2;
+        private bool _outputInterface;
+        private bool _generateIndexfile;
         private readonly string _folderPath;
         private ObservableCollection<OutputFile> _files;
         private OutputOptions _selectedOption;
@@ -38,7 +41,7 @@ namespace VSExtension
         }
 
         public IList<OutputOptions> OutputOptionList = Enum.GetValues(typeof(OutputOptions)).Cast<OutputOptions>().ToList();
-        private bool _outputInterface;
+        
 
         public OutputOptions SelectedOption
         {
@@ -56,6 +59,16 @@ namespace VSExtension
             set
             {
                 _outputInterface = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public bool GenerateIndexFile
+        {
+            get => _generateIndexfile;
+            set
+            {
+                _generateIndexfile = value;
                 OnPropertyChanged();
             }
         }
@@ -92,53 +105,68 @@ namespace VSExtension
 
         private void button_Click(object sender, RoutedEventArgs e)
         {
-            using (var dialog = new FolderBrowserDialog(){Description = "Choose an output folder.", ShowNewFolderButton = true })
+            using (var dialog = new FolderBrowserDialog {Description = "Choose an output folder.", ShowNewFolderButton = true })
             {
                 var result = dialog.ShowDialog();
 
                 if (result != System.Windows.Forms.DialogResult.OK)
                     return;
 
-                string folderName = dialog.SelectedPath;
-
-
+                var folderName = dialog.SelectedPath;
                 var outputWindow = _dte2.ToolWindows.OutputWindow;
                 var pane = outputWindow.OutputWindowPanes.Cast<OutputWindowPane>().FirstOrDefault(p => p.Name == OUTPUT_PANE_NAME);
 
                 // Add a new pane to the Output window.
                 pane = pane ?? outputWindow.OutputWindowPanes.Add(OUTPUT_PANE_NAME);
 
-                foreach (var file in this.Files.Where(f=>f.Selected))
+                var convert = new ConvertHelper();
+                var dict = new Dictionary<OutputFile, List<ClassDefinition>>();
+                var classDefinitions = new Dictionary<string, ClassDefinition>();
+
+                foreach (var file in Files.Where(f=>f.Selected))
                 {
                     try
                     {
-                        var classDefinitions = ConvertHelper.ParseFile(file.FilePath).ToDictionary(c => c.Name, c => c);
+                        var results = convert.ParseFile(file.FilePath);
+                        dict.Add(file, results);
+                        results.ForEach(c => classDefinitions.Add(c.Name, c));
+                    }
+                    catch (Exception exception)
+                    {
+                        Debug.WriteLine(exception);
+                        pane.OutputString($"Error: {exception}{Environment.NewLine}");
+                        file.Result = "Failed";
+                    }
+                }
 
-                        foreach (var definition in classDefinitions)
+                foreach (var d in dict)
+                {
+                    try
+                    {
+                        foreach (var definition in d.Value)
                         {
-                            var content = CreateTsFile(classDefinitions, definition.Value);
-                            var outputFilePath = $@"{folderName}\{definition.Value.TypeName}.ts";
+                            var content = CreateTsFile(classDefinitions, definition);
+                            var outputFilePath = $@"{folderName}\{definition.TypeName}.ts";
 
                             if (!File.Exists(outputFilePath))
                             {
                                 File.WriteAllText(outputFilePath, content);
-                                file.Result = "Created";
+                                d.Key.Result = "Created";
                             }
                             else
                             {
                                 switch (SelectedOption)
                                 {
                                     case OutputOptions.Skip:
-                                        file.Result = "Skipped";
+                                        d.Key.Result = "Skipped";
                                         break;
                                     case OutputOptions.Merge:
                                         File.AppendAllText(outputFilePath, content);
-                                        file.Result = "Merged";
+                                        d.Key.Result = "Merged";
                                         break;
                                     case OutputOptions.Overwrite:
                                         File.WriteAllText(outputFilePath, content);
-
-                                        file.Result = "Overwritten";
+                                        d.Key.Result = "Overwritten";
                                         break;
                                     default:
                                         throw new ArgumentOutOfRangeException();
@@ -150,10 +178,32 @@ namespace VSExtension
                     {
                         Debug.WriteLine(exception);
                         pane.OutputString($"Error: {exception}{Environment.NewLine}");
-                        file.Result = "Failed";
+                        d.Key.Result = "Failed";
                     }
 
-                    pane.OutputString($"File {file.FileName} {file.Result.ToLower()}.{Environment.NewLine}");
+                    pane.OutputString($"File {d.Key.FileName} {d.Key.Result.ToLower()}.{Environment.NewLine}");
+                }
+
+                try
+                {
+                    var content = CreateIndexFile(classDefinitions);
+                    var outputFilePath = $@"{folderName}\index.ts";
+
+                    if (!File.Exists(outputFilePath))
+                    {
+                        File.WriteAllText(outputFilePath, content);
+                    }
+                    else
+                    {
+                        File.AppendAllText(outputFilePath, content);
+                    }
+
+                    pane.OutputString($"File index.ts created.{Environment.NewLine}");
+                }
+                catch (Exception exception)
+                {
+                    Debug.WriteLine(exception);
+                    pane.OutputString($"Error: {exception}{Environment.NewLine}");
                 }
             }
         }
@@ -181,7 +231,19 @@ namespace VSExtension
             return builder.ToString();
         }
 
-        private void checkBox_Checked(object sender, RoutedEventArgs e)
+        private string CreateIndexFile(IReadOnlyDictionary<string, ClassDefinition> classes)
+        {
+            var builder = new StringBuilder();
+
+            foreach (var c in classes.Values)
+            {
+                builder.AppendLine($@"export {{{c.Name}}} from './{c.Name}'");
+            }
+
+            return builder.ToString();
+        }
+
+        private void CheckBox_Checked(object sender, RoutedEventArgs e)
         {
             foreach (var file in this.Files)
             {

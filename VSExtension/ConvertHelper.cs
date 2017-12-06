@@ -6,7 +6,14 @@ namespace VSExtension
 {
     public class ConvertHelper
     {
-        public static List<ClassDefinition> ParseFile(string filePath)
+        public ClassDefinitionCache Cache { get; }
+
+        public ConvertHelper(ClassDefinitionCache cache = null)
+        {
+            Cache = cache ?? new ClassDefinitionCache();
+        }
+
+        public List<ClassDefinition> ParseFile(string filePath)
         {
             var stream = File.OpenRead(filePath);
             var reader = new StreamReader(stream);
