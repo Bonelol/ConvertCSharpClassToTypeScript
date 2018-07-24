@@ -13,6 +13,7 @@ using System.Windows.Forms;
 using EnvDTE;
 using EnvDTE80;
 using Microsoft.VisualStudio.PlatformUI;
+using VSExtension.Extensions;
 using Path = System.IO.Path;
 
 namespace VSExtension
@@ -92,7 +93,7 @@ namespace VSExtension
         public override void EndInit()
         {
             base.EndInit();
-            this.checkBox.IsChecked = true;
+            this.CheckBox.IsChecked = true;
             this.DataContext = this;
         }
 
@@ -208,7 +209,7 @@ namespace VSExtension
             }
         }
 
-        private string CreateTsFile(IDictionary<string, ClassDefinition> classes, ClassDefinition c)
+        private string CreateTsFile(IDictionary<string, ClassDefinition> classes, ClassDefinition c, bool pascalCase = false)
         {
             var builder = new StringBuilder();
             var imports = c.References.Where(classes.ContainsKey);
@@ -223,7 +224,8 @@ namespace VSExtension
 
             foreach (var property in c.Properties)
             {
-                builder.AppendLine($"    {property.Name}: {property.Type.TypeScriptName};");
+                var name = pascalCase ? property.Name : property.Name.ToPascalCase();
+                builder.AppendLine($"    {name}: {property.Type.TypeScriptName};");
             }
 
             builder.AppendLine("}");
@@ -231,7 +233,7 @@ namespace VSExtension
             return builder.ToString();
         }
 
-        private string CreateIndexFile(IReadOnlyDictionary<string, ClassDefinition> classes)
+        private static string CreateIndexFile(IReadOnlyDictionary<string, ClassDefinition> classes)
         {
             var builder = new StringBuilder();
 

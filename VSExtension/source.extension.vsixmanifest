@@ -3,7 +3,7 @@
     <Metadata>
         <Identity Id="TypeSharp.b1ab79f6-faf6-40c2-89fc-0d3ef75c6342" Version="1.0" Language="en-US" Publisher="Max Meng" />
         <DisplayName>TypeSharp</DisplayName>
-        <Description xml:space="preserve">Convert C# classes into TypeScript classes (or interfaces).</Description>
+        <Description xml:space="preserve">Convert C# class into TypeScript class (or interface).</Description>
         <License>LICENSE.txt</License>
         <Icon>Resources\VSPackage.ico</Icon>
         <Tags>TypeScript</Tags>

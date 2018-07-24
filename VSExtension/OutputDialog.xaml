@@ -6,16 +6,16 @@
              xmlns:local="clr-namespace:VSExtension"
              xmlns:platformUi="clr-namespace:Microsoft.VisualStudio.PlatformUI;assembly=Microsoft.VisualStudio.Shell.15.0"
              xmlns:system="clr-namespace:System;assembly=mscorlib"
-             mc:Ignorable="d" Width="374" Height="424" Title="Convert to TypeScript">
+             mc:Ignorable="d" Width="374" Height="424" Title="Convert to TypeScript" ResizeMode="NoResize">
     <platformUi:DialogWindow.Resources>
-        <!--<ObjectDataProvider x:Key="dataFromEnum" MethodName="GetValues" ObjectType="{x:Type system:Enum}">
+        <!--<ObjectDataProvider x:Key="DataFromEnum" MethodName="GetValues" ObjectType="{x:Type system:Enum}">
             <ObjectDataProvider.MethodParameters>
                 <x:Type TypeName="local:OutputOptions"/>
             </ObjectDataProvider.MethodParameters>
         </ObjectDataProvider>-->
     </platformUi:DialogWindow.Resources>
     <Grid>
-        <ListBox x:Name="listBox" ItemsSource="{Binding Files}" Margin="0,0,10,47" HorizontalContentAlignment="Stretch" HorizontalAlignment="Right" Width="346" Height="265" VerticalAlignment="Bottom">
+        <ListBox x:Name="ListBox" ItemsSource="{Binding Files}" Margin="0,0,10,47" HorizontalContentAlignment="Stretch" HorizontalAlignment="Right" Width="346" Height="265" VerticalAlignment="Bottom">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
@@ -31,11 +31,12 @@
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
-        <Button x:Name="button" Content="Convert" Margin="281,363,0,0" Click="button_Click" Height="20" VerticalAlignment="Top" HorizontalAlignment="Left" Width="75"/>
-        <CheckBox x:Name="checkBox" Content="Select All" HorizontalAlignment="Left" Margin="10,351,0,0" VerticalAlignment="Top" Checked="CheckBox_Checked" Unchecked="CheckBox_OnUnchecked"/>
-        <ComboBox x:Name="comboBox" ItemsSource="{Binding Source={StaticResource dataFromEnum}}" SelectedItem="{Binding SelectedOption}" Margin="236,50,10,0" VerticalAlignment="Top"/>
-        <CheckBox x:Name="interfaceCheckBox" IsChecked="{Binding OutputInterface}" Content="Interface?" HorizontalAlignment="Right" Margin="0,0,284,368" VerticalAlignment="Bottom" RenderTransformOrigin="-0.268,0.8"/>
-        <CheckBox x:Name="indexCheckbox" IsChecked="{Binding GenerateIndexFile}" Content="Generate index.ts" HorizontalAlignment="Right" Margin="0,30,244,0" VerticalAlignment="Top"/>
-        <Label x:Name="label" Content="When same name file existed:" HorizontalAlignment="Right" Margin="0,50,189,0" VerticalAlignment="Top" RenderTransformOrigin="0.474,0.538"/>
+        <Button x:Name="Button" Content="Convert" Margin="281,363,0,0" Click="button_Click" Height="20" VerticalAlignment="Top" HorizontalAlignment="Left" Width="75"/>
+        <CheckBox x:Name="CheckBox" Content="Select All" HorizontalAlignment="Left" Margin="10,351,0,0" VerticalAlignment="Top" Checked="CheckBox_Checked" Unchecked="CheckBox_OnUnchecked"/>
+        <ComboBox x:Name="ComboBox" ItemsSource="{Binding Source={StaticResource DataFromEnum}}" SelectedItem="{Binding SelectedOption}" Margin="236,50,10,0" VerticalAlignment="Top"/>
+        <CheckBox x:Name="InterfaceCheckBox" IsChecked="{Binding OutputInterface}" Content="Interface?" HorizontalAlignment="Right" Margin="0,0,284,368" VerticalAlignment="Bottom" RenderTransformOrigin="-0.268,0.8"/>
+        <CheckBox x:Name="IndexCheckbox" IsChecked="{Binding GenerateIndexFile}" Content="Generate index.ts" HorizontalAlignment="Right" Margin="0,30,244,0" VerticalAlignment="Top"/>
+        <Label x:Name="Label" Content="When same name file existed:" HorizontalAlignment="Right" Margin="0,50,189,0" VerticalAlignment="Top" RenderTransformOrigin="0.474,0.538"/>
+        <CheckBox x:Name="PascalCaseCheckbox" Content="Pascal case" HorizontalAlignment="Left" Margin="108,0,0,368" VerticalAlignment="Bottom"/>
     </Grid>
 </platformUi:DialogWindow>
