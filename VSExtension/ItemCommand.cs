@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using EnvDTE;
 using EnvDTE80;
 using Microsoft.VisualStudio.Shell;
+using VSExtension.Extensions;
 
 
 namespace VSExtension
@@ -132,7 +133,7 @@ namespace VSExtension
 
             foreach (var property in c.Properties)
             {
-                builder.AppendLine($"    {property.Name}: {property.Type.TypeScriptName};");
+                builder.AppendLine($"    {property.Name.ToCamelCase()}: {property.Type.TypeScriptName};");
             }
 
             builder.AppendLine("}");

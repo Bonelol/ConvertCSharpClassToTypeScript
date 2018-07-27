@@ -10,7 +10,10 @@ namespace VSExtension
         public string TypeName { get; set; }
         public string TypeScriptBaseName => _typeNameMappings.ContainsKey(TypeName) ? _typeNameMappings[TypeName] : TypeName;
         public string Name => this.IsGeneric ? $"{TypeName}<{string.Join(",", this.TypeParameters.Select(a => a.Name))}>" : TypeName;
-        public string TypeScriptName => this.IsGeneric ? $"{TypeScriptBaseName}<{string.Join(",", this.TypeParameters.Select(a => a.Name))}>" : TypeScriptBaseName;
+
+        public string TypeScriptName => this.IsGeneric
+            ? $"{TypeScriptBaseName}<{string.Join(",", this.TypeParameters.Select(a => _typeNameMappings.ContainsKey(a.Name) ? _typeNameMappings[a.Name] : a.Name))}>"
+            : TypeScriptBaseName;
         public bool IsGeneric => this.TypeParameters != null && this.TypeParameters.Count > 0;
         public ICollection<ClassDefinition> TypeParameters { get; set; }
         public ICollection<PropertyDefinition> Properties { get; set; }
