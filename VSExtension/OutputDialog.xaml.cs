@@ -27,6 +27,7 @@ namespace VSExtension
         private bool _outputInterface;
         private bool _generateIndexfile;
         private readonly string _folderPath;
+        private readonly IEnumerable<string> _preselected;
         private ObservableCollection<OutputFile> _files;
         private OutputOptions _selectedOption;
         private const string OUTPUT_PANE_NAME = "Convert to TypeScript";
@@ -82,12 +83,30 @@ namespace VSExtension
             InitializeComponent();
         }
 
+        public OutputDialog(DTE2 dte2, IEnumerable<string> files)
+        {
+            _dte2 = dte2;
+            _preselected = files;
+            Files = new ObservableCollection<OutputFile>();
+            InitializeComponent();
+        }
+
         public override void BeginInit()
         {
             base.BeginInit();
-            Files = new ObservableCollection<OutputFile>(Directory.GetFiles(_folderPath, "*.cs")
-                .Select(f => new OutputFile() {FileName = Path.GetFileName(f), FilePath = f, Selected = true})
-                .OrderBy(f => f.FileName));
+
+            if (_folderPath == null)
+            {
+                Files = new ObservableCollection<OutputFile>(_preselected
+                    .Select(f => new OutputFile() { FileName = Path.GetFileName(f), FilePath = f, Selected = true })
+                    .OrderBy(f => f.FileName));
+            }
+            else
+            {
+                Files = new ObservableCollection<OutputFile>(Directory.GetFiles(_folderPath, "*.cs")
+                    .Select(f => new OutputFile() { FileName = Path.GetFileName(f), FilePath = f, Selected = true })
+                    .OrderBy(f => f.FileName));
+            }
         }
 
         public override void EndInit()
@@ -106,7 +125,8 @@ namespace VSExtension
 
         private void button_Click(object sender, RoutedEventArgs e)
         {
-            using (var dialog = new FolderBrowserDialog {Description = "Choose an output folder.", ShowNewFolderButton = true })
+            var rootFolder = _folderPath ?? Path.GetDirectoryName(_preselected.First());
+            using (var dialog = new FolderBrowserDialog {Description = "Choose an output folder.", ShowNewFolderButton = true, SelectedPath = rootFolder })
             {
                 var result = dialog.ShowDialog();
 
@@ -185,26 +205,30 @@ namespace VSExtension
                     pane.OutputString($"File {d.Key.FileName} {d.Key.Result.ToLower()}.{Environment.NewLine}");
                 }
 
-                try
+                //index.ts
+                if (GenerateIndexFile)
                 {
-                    var content = CreateIndexFile(classDefinitions);
-                    var outputFilePath = $@"{folderName}\index.ts";
-
-                    if (!File.Exists(outputFilePath))
+                    try
                     {
-                        File.WriteAllText(outputFilePath, content);
-                    }
-                    else
-                    {
-                        File.AppendAllText(outputFilePath, content);
-                    }
+                        var content = CreateIndexFile(classDefinitions);
+                        var outputFilePath = $@"{folderName}\index.ts";
 
-                    pane.OutputString($"File index.ts created.{Environment.NewLine}");
-                }
-                catch (Exception exception)
-                {
-                    Debug.WriteLine(exception);
-                    pane.OutputString($"Error: {exception}{Environment.NewLine}");
+                        if (!File.Exists(outputFilePath))
+                        {
+                            File.WriteAllText(outputFilePath, content);
+                        }
+                        else
+                        {
+                            File.AppendAllText(outputFilePath, content);
+                        }
+
+                        pane.OutputString($"File index.ts created.{Environment.NewLine}");
+                    }
+                    catch (Exception exception)
+                    {
+                        Debug.WriteLine(exception);
+                        pane.OutputString($"Error: {exception}{Environment.NewLine}");
+                    }
                 }
             }
         }

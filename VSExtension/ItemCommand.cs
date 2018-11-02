@@ -82,31 +82,46 @@ namespace VSExtension
         /// <param name="e">Event args.</param>
         private void MenuItemCallback(object sender, EventArgs e)
         {
-            var item = GetSelectedSolutionExplorerItem();
-            var projectItem = (ProjectItem) item.Object;
-            var filePath = projectItem.Properties.Item("FullPath").Value.ToString();
-            var classDefinitions = new ConvertHelper().ParseFile(filePath).ToDictionary(c => c.Name, c => c);
+            var items = GetSelectedSolutionExplorerItems();
 
-            foreach (var definition in classDefinitions)
+            if (items == null)
             {
-                var content = CreateTsFile(classDefinitions, definition.Value);
-
-                var dlg = new SaveFileDialog
-                {
-                    Filter = "Typescript file (.ts)|*.ts",
-                    DefaultExt = "ts",
-                    AddExtension = true
-                };
-
-                var result = dlg.ShowDialog();
-
-                // Process save file dialog box results
-                if (result == DialogResult.OK)
-                {
-                    // Save document
-                    File.WriteAllText(dlg.FileName, content);
-                }
+                return;
             }
+
+            var filePaths = items.Select(i => i.Object).Cast<ProjectItem>().Select(p => p.Properties.Item("FullPath").Value.ToString());
+            var output = new OutputDialog((DTE2)ServiceProvider.GetService(typeof(DTE)), filePaths)
+            {
+                HasMinimizeButton = false,
+                HasMaximizeButton = false
+            };
+
+            output.ShowModal();
+
+            //var projectItem = (ProjectItem)item.Object;
+            //var filePath = projectItem.Properties.Item("FullPath").Value.ToString();
+            //var classDefinitions = new ConvertHelper().ParseFile(filePath).ToDictionary(c => c.Name, c => c);
+
+            //foreach (var definition in classDefinitions)
+            //{
+            //    var content = CreateTsFile(classDefinitions, definition.Value);
+
+            //    var dlg = new SaveFileDialog
+            //    {
+            //        Filter = "Typescript file (.ts)|*.ts",
+            //        DefaultExt = "ts",
+            //        AddExtension = true
+            //    };
+
+            //    var result = dlg.ShowDialog();
+
+            //    // Process save file dialog box results
+            //    if (result == DialogResult.OK)
+            //    {
+            //        // Save document
+            //        File.WriteAllText(dlg.FileName, content);
+            //    }
+            //}
         }
 
         private UIHierarchyItem GetSelectedSolutionExplorerItem()
@@ -117,6 +132,13 @@ namespace VSExtension
                 return null;
 
             return items[0];
+        }
+
+        private UIHierarchyItem[] GetSelectedSolutionExplorerItems()
+        {
+            var dte2 = (DTE2)ServiceProvider.GetService(typeof(DTE));
+
+            return dte2.ToolWindows.SolutionExplorer.SelectedItems is UIHierarchyItem[] items ? items : null;
         }
 
         private static string CreateTsFile(IDictionary<string, ClassDefinition> classes, ClassDefinition c)

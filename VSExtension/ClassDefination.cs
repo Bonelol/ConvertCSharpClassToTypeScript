@@ -30,6 +30,9 @@ namespace VSExtension
             {"Double", "number"},
             {"float", "number"},
             {"Float", "number"},
+            {"decimal", "number"},
+            {"long", "number"},
+            {"Int64", "number"},
 
             {"bool", "boolean"},
             {"Boolean", "boolean"},
@@ -41,6 +44,8 @@ namespace VSExtension
             {"List", "Array"},
             {"DbSet", "Array"},
             {"HashSet", "Array"},
+
+            {"Dictionary", "Map"}
         };
     }
 }

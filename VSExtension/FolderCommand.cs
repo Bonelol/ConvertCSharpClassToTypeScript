@@ -79,6 +79,10 @@ namespace VSExtension
         private void MenuItemCallback(object sender, EventArgs e)
         {
             var item = GetSelectedSolutionExplorerItem();
+
+            if (item == null)
+                return;
+
             var projectItem = (ProjectItem)item.Object;
             var folderPath = projectItem.Properties.Item("FullPath").Value.ToString();
 
